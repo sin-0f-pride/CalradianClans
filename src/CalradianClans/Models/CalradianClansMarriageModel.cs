@@ -58,14 +58,12 @@ namespace CalradianClans.Models
                 Hero hero2 = firstHero.IsFemale ? firstHero : secondHero;
                 MBList<Hero> children = hero.Children;
                 MBList<Hero> children2 = hero2.Children;
-                float ageBonus = hero.Age > 40f && hero2.Age > 30f ? 3f : 12f;
                 result += (hero.Age - 25f) / 25f;
                 result += (hero2.Age - 22f) / 20f;
-                result -= ((children != null) ? children.Count : 0) / 10;
-                result -= ((children2 != null) ? children2.Count : 0) / 5;
-                result /= ageBonus;
+                result -= (children != null ? children.Count : 0) / 10;
+                result -= (children2 != null ? children2.Count : 0) / 5;
+                result /= hero.Age > 40f && hero2.Age > 30f ? 3f : 12f;
                 result -= Math.Abs(hero.Clan.Tier - hero2.Clan.Tier) / 4;
-                return result;
             }
             return result;
         }

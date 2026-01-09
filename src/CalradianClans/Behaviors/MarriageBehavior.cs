@@ -21,48 +21,25 @@ namespace CalradianClans.Behaviors
         }
         public void OnMarriageOfferedToPlayer(Hero suitor, Hero maiden)
         {
-            int num = 0;
-            Hero relevantMember = null;
-            if (suitor.Clan == Clan.PlayerClan)
-            {
-                num = Campaign.Current.Models.RomanceModel.GetAttractionValuePercentage(maiden, suitor);
-                relevantMember = suitor;
-            }
-            if (maiden.Clan == Clan.PlayerClan)
-            {
-                num = Campaign.Current.Models.RomanceModel.GetAttractionValuePercentage(suitor, maiden);
-                relevantMember = maiden;
-            }
+            int attraction = suitor.Clan == Clan.PlayerClan ? Campaign.Current.Models.RomanceModel.GetAttractionValuePercentage(maiden, suitor) : Campaign.Current.Models.RomanceModel.GetAttractionValuePercentage(suitor, maiden);
+            Hero relevantMember = suitor.Clan == Clan.PlayerClan ? suitor : maiden;
             int relation = suitor.GetRelation(maiden);
-            string text;
-            if (num + relation < 30)
+            string text = "If I may be so bold, I think I love them already - unless you bare me ill will, please accept this proposal.";
+            if (attraction + relation < 30)
             {
                 text = "Please don't make me marry them - anybody else!";
             }
-            else
+            else if (attraction + relation < 60)
             {
-                if (num + relation < 60)
-                {
-                    text = "They would not be my choice, but if this is what you want, I am not willing it fight over it.";
-                }
-                else
-                {
-                    if (num + relation < 80)
-                    {
-                        text = "I think this is a strong match and will happily marry them.";
-                    }
-                    else
-                    {
-                        if (num + relation < 94)
-                        {
-                            text = "Please accept this proposal. I will happily marry them.";
-                        }
-                        else
-                        {
-                            text = "If I may be so bold, I think I love them already - unless you bare me ill will, please accept this proposal.";
-                        }
-                    }
-                }
+                text = "They would not be my choice, but if this is what you want, I am not willing it fight over it.";
+            }
+            else if (attraction + relation < 80)
+            {
+                text = "I think this is a strong match and will happily marry them.";
+            }
+            else if (attraction + relation < 94)
+            {
+                text = "Please accept this proposal. I will happily marry them.";
             }
             InformationManager.ShowInquiry(new InquiryData(new TextObject("{FIRST_NAME} wants you to know", null).SetTextVariable("FIRST_NAME", relevantMember.Name.ToString()).ToString(), text, true, true, "I'll consider it.", "This isn't about you!", delegate ()
             {
@@ -92,7 +69,23 @@ namespace CalradianClans.Behaviors
         }
         private int InterestInMarriageMatch(int attraction, int relation)
         {
-            return MathF.Round(MathF.Clamp(((attraction + relation) / 10) - 5, -5f, 5f));
+            if (attraction + relation < 20)
+            {
+                return -5;
+            }
+            else if (attraction + relation < 40)
+            {
+                return -2;
+            }
+            else if (attraction + relation > 70)
+            {
+                return 3;
+            }
+            else if (attraction + relation > 90)
+            {
+                return 5;
+            }
+            return 0;
         }
         private bool AreHeroesRelatedAux1(Hero firstHero, Hero secondHero, int ancestorDepth)
         {
