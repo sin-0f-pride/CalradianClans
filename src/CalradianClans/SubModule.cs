@@ -52,12 +52,12 @@ namespace CalradianClans
 
         public static void Log(string message)
         {
-            string text = System.IO.Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.Personal), "Mount and Blade II Bannerlord", "Logs");
+            string text = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.Personal), "Mount and Blade II Bannerlord", "Logs");
             if (!Directory.Exists(text))
             {
                 Directory.CreateDirectory(text);
             }
-            string path = System.IO.Path.Combine(text, "TC.txt");
+            string path = Path.Combine(text, "TC.txt");
             using (StreamWriter streamWriter = new StreamWriter(path, true))
             {
                 streamWriter.WriteLine("[" + DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss") + "] " + message);
